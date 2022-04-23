@@ -6,7 +6,7 @@ import PropTypes, { InferProps } from 'prop-types';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useStore, wrapper } from '../redux/store';
 
-import { AppProps } from 'next/app';
+import type { AppProps } from 'next/app'
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { ConnectedRouter } from 'connected-next-router';
@@ -29,7 +29,7 @@ interface CustomAppProps extends AppProps {
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
-function CustomApp(props: CustomAppProps) {
+function CustomApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const store = useStore(pageProps.initialReduxState);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
