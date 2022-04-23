@@ -1,0 +1,16 @@
+// REDUX ACTION TYPES
+export const TICK = 'TICK';
+export const INCREMENT = 'INCREMENT';
+export const DECREMENT = 'DECREMENT';
+export const RESET = 'RESET';
+
+export const SET_RECORD = 'SET_RECORD';
+export const SET_ANNOTATION = 'SET_ANNOTATION';
+export const DELETE_ANNOTATION = 'DELETE_ANNOTATION';
+export const EDIT_ANNOTATION = 'EDIT_ANNOTATION';
+export const EDIT_RECORD = 'EDIT_RECORD';
+export const CREATE_RECORD = 'CREATE_RECORD';
+
+export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
+export const SET_SEARCH = 'SET_SEARCH';

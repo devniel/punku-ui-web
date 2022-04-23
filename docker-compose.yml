@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  main:
+    container_name: punku.ui.web
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    command: yarn dev
+    env_file:
+      - docker.env
+    networks:
+      - webnet
+networks:
+  webnet:
