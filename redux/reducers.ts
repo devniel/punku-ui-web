@@ -8,53 +8,18 @@ import {
 } from 'connected-next-router';
 import * as types from './types';
 
-const recordsReducer = (state: Record | null = null, { type, payload }) => {
-  const record = JSON.parse(JSON.stringify(state));
-  switch (type) {
-    case types.SET_RECORD: {
-      return payload;
+const authReducer = (state = {}, { type, payload }) => {
+  console.log('state:', state);
+  const authState = JSON.parse(JSON.stringify(state));
+  console.log({type, payload})
+  switch(type){
+    case types.SIGN_UP_ERROR: {
+      return {
+        errors: payload
+      }
     }
-    case types.SET_ANNOTATION: {
-      record?.annotations.push(payload);
-      return record;
-    }
-    case types.DELETE_ANNOTATION: {
-      const annotation = payload;
-      const idx = record?.annotations.findIndex(
-        (a) => a.start === annotation.start && a.end === annotation.end
-      );
-      if (idx !== -1) record?.annotations.splice(idx, 1);
-      return record;
-    }
-    case types.EDIT_ANNOTATION: {
-      const annotation = payload;
-      const idx = record?.annotations.findIndex((a) => a.id === annotation.id);
-      if (idx !== -1) record.annotations[idx] = annotation;
-      return record;
-    }
-    case types.EDIT_RECORD: {
-      const updatedRecord = payload;
-      updatedRecord.annotations =
-        updatedRecord.text === record.text ? record?.annotations : [];
-      return updatedRecord;
-    }
-    case types.CREATE_RECORD: {
-      return payload;
-    }
-    default:
-      return record;
   }
-};
-
-const searchReducer = (state: Search | null = null, { type, payload }) => {
-  const search = JSON.parse(JSON.stringify(state));
-  switch (type) {
-    case types.SET_SEARCH: {
-      return payload;
-    }
-    default:
-      return search;
-  }
+  return authState;
 };
 
 /**
@@ -80,8 +45,7 @@ export const mainReducer = (state, action) => {
 
 // COMBINED REDUCERS
 const rootReducer = combineReducers({
-  search: searchReducer,
-  record: recordsReducer,
+  auth: authReducer,
   router: routerReducer,
 });
 
