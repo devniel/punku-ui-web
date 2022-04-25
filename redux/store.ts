@@ -10,16 +10,18 @@ import {
 } from 'connected-next-router';
 import Router from 'next/router';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
+import { configureStore } from '@reduxjs/toolkit';
 
 let store;
 
 function initStore(initialState) {
   const routerMiddleware = createRouterMiddleware();
-  return createStore(
-    mainReducer,
-    initialState,
-    composeWithDevTools(applyMiddleware(thunkMiddleware, routerMiddleware))
-  );
+  return configureStore({
+    reducer: mainReducer,
+    preloadedState: initialState,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunkMiddleware).concat(routerMiddleware),
+    devTools: true
+  });
 }
 
 export const initializeStore = (preloadedState) => {
@@ -60,3 +62,8 @@ export const setupStore = (context) => {
 };
 
 export const wrapper = createWrapper(setupStore);
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch;

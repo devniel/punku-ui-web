@@ -7,20 +7,7 @@ import {
   routerReducer,
 } from 'connected-next-router';
 import * as types from './types';
-
-const authReducer = (state = {}, { type, payload }) => {
-  console.log('state:', state);
-  const authState = JSON.parse(JSON.stringify(state));
-  console.log({type, payload})
-  switch(type){
-    case types.SIGN_UP_ERROR: {
-      return {
-        errors: payload
-      }
-    }
-  }
-  return authState;
-};
+import authSlice from './authSlice';
 
 /**
  * Router reducer
@@ -45,8 +32,8 @@ export const mainReducer = (state, action) => {
 
 // COMBINED REDUCERS
 const rootReducer = combineReducers({
-  auth: authReducer,
   router: routerReducer,
+  auth: authSlice,
 });
 
 export default rootReducer;

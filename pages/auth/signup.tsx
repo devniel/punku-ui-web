@@ -12,24 +12,25 @@ import {
 import { push } from 'connected-next-router';
 import Link from 'next/link';
 import { createContext, useContext, useState, ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import StyledInlineLink from '../../components/StyledInlineLink';
 import {
   DEFAULT_PAGE_SEARCH_RESULTS,
   DEFAULT_PAGE_START,
 } from '../../constants';
-import { signUp } from '../../redux/actions';
+import { signUp } from '../../redux/authSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export function Signup() {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const errors = useSelector((state) => state.auth?.errors);
+  const dispatch = useAppDispatch();
+  const errors = useAppSelector(state => state.auth?.errors);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const dispatch = useDispatch();
+
 
   /** When changing query text */
   const handleChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
