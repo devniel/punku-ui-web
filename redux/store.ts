@@ -10,7 +10,17 @@ import {
 } from 'connected-next-router';
 import Router from 'next/router';
 import { HYDRATE, createWrapper } from 'next-redux-wrapper';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
+import { cleanAuthErrors } from './authSlice';
+
+const listenerMiddleware = createListenerMiddleware();
+
+listenerMiddleware.startListening({
+  type: '@@router/LOCATION_CHANGE',
+  effect: async (action, listenerApi) => {
+    listenerApi.dispatch(cleanAuthErrors());
+  },
+});
 
 let store;
 
@@ -19,8 +29,12 @@ function initStore(initialState) {
   return configureStore({
     reducer: mainReducer,
     preloadedState: initialState,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunkMiddleware).concat(routerMiddleware),
-    devTools: true
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware()
+        .concat(thunkMiddleware)
+        .concat(routerMiddleware)
+        .concat(listenerMiddleware.middleware),
+    devTools: true,
   });
 }
 

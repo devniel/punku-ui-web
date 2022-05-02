@@ -42,7 +42,7 @@ export function Index() {
         <Typography fontWeight={500} variant="h1">
           punku
         </Typography>
-        <Link href="/auth/signin" passHref>
+        <Link href="/auth/signup" passHref>
           <Button variant="contained">
             join
           </Button>

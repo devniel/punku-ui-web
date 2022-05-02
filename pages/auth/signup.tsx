@@ -118,7 +118,7 @@ export function Signup() {
             onChange={handleChangePassword}
           />
 
-          {errors &&
+          {errors?.length > 0 &&
           <Alert icon={false} variant="filled" severity="error" sx={{ width: '100%', mt: 2}}>
             This is an error alert — check it out!
           </Alert>}

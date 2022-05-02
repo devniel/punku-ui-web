@@ -18,19 +18,22 @@ import {
   DEFAULT_PAGE_SEARCH_RESULTS,
   DEFAULT_PAGE_START,
 } from '../../constants';
+import { signIn } from '../../redux/authSlice';
+import { useAppSelector } from '../../redux/hooks';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export function Signin() {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const [username, setUsername] = useState<string>('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const dispatch = useDispatch();
+  const errors = useAppSelector(state => state.auth?.errors);
 
   /** When changing query text */
-  const handleChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
+  const handleChangeUsernameOrEmail = (e: ChangeEvent<HTMLInputElement>) => {
+    setUsernameOrEmail(e.target.value);
   };
 
   const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,16 +63,16 @@ export function Signin() {
           }}
           autoComplete='username'
           fullWidth
-          placeholder='username'
-          id="username"
+          placeholder='username or email'
+          id="usernameOrEmail"
           sx={{
             ".MuiInputBase-root": {
               borderBottomLeftRadius: "0px",
               borderBottomRightRadius: "0px"
             }
           }}
-          value={username}
-          onChange={handleChangeUsername}
+          value={usernameOrEmail}
+          onChange={handleChangeUsernameOrEmail}
         />
         <TextField
           inputProps={{
@@ -89,12 +92,16 @@ export function Signin() {
           value={password}
           onChange={handleChangePassword}
         />
-        <Alert icon={false} variant="filled" severity="error" sx={{ width: '100%', mt: 2}}>
+        {errors?.length > 0 && <Alert icon={false} variant="filled" severity="error" sx={{ width: '100%', mt: 2}}>
           This is an error alert — check it out!
-        </Alert>
+        </Alert>}
         <Button fullWidth variant="contained" sx={{
           my: 2
-        }}>
+        }} onClick={async () => {
+          await dispatch(signIn({ usernameOrEmail, password }));
+          await dispatch(push('/'));
+        }}
+        >
           Sign in
         </Button>
         <Typography variant="body2">
