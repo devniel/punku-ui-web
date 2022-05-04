@@ -4,6 +4,7 @@ import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   Container,
   IconButton,
   TextField,
@@ -17,16 +18,17 @@ import {
   DEFAULT_PAGE_SEARCH_RESULTS,
   DEFAULT_PAGE_START,
 } from '../../constants';
-import { signUp } from '../../redux/authSlice';
+import { AuthStatus, signUp } from '../../redux/authSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export function Signup() {
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const dispatch = useAppDispatch();
   const errors = useAppSelector(state => state.auth?.errors);
+  const status = useAppSelector(state => state.auth?.status);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -63,78 +65,83 @@ export function Signup() {
           <Typography fontWeight={500} variant="h1" mb={3}>
             punku
           </Typography>
-          <TextField
-            inputProps={{
-              'data-lpignore': 'true'
-            }}
-            autoComplete='email'
-            fullWidth
-            placeholder='email'
-            name="email"
-            id="email"
-            sx={{
-              ".MuiInputBase-root": {
-                borderBottomLeftRadius: "0px",
-                borderBottomRightRadius: "0px"
-              }
-            }}
-            value={email}
-            onChange={handleChangeEmail}
-          />
-          <TextField
-            inputProps={{
-              'data-lpignore': 'true'
-            }}
-            autoComplete='username'
-            fullWidth
-            placeholder='username'
-            id="username"
-            name="username"
-            sx={{
-              ".MuiInputBase-root": {
-                borderRadius: "0px"
-              }
-            }}
-            value={username}
-            onChange={handleChangeUsername}
-          />
-          <TextField
-            inputProps={{
-              'data-lpignore': 'true'
-            }}
-            autoComplete='new-password'
-            placeholder='password'
-            fullWidth
-            type="password"
-            id="(sadfds)"
-            name="password"
-            sx={{
-              ".MuiInputBase-root": {
-                borderTopLeftRadius: "0px",
-                borderTopRightRadius: "0px"
-              }
-            }}
-            value={password}
-            onChange={handleChangePassword}
-          />
+          {status === AuthStatus.PROCESSING && <CircularProgress/>}
+          {status === AuthStatus.IDLE &&
+            <>
+              <TextField
+                inputProps={{
+                  'data-lpignore': 'true'
+                }}
+                autoComplete='email'
+                fullWidth
+                placeholder='email'
+                name="email"
+                id="email"
+                sx={{
+                  ".MuiInputBase-root": {
+                    borderBottomLeftRadius: "0px",
+                    borderBottomRightRadius: "0px"
+                  }
+                }}
+                value={email}
+                onChange={handleChangeEmail}
+              />
+              <TextField
+                inputProps={{
+                  'data-lpignore': 'true'
+                }}
+                autoComplete='username'
+                fullWidth
+                placeholder='username'
+                id="username"
+                name="username"
+                sx={{
+                  ".MuiInputBase-root": {
+                    borderRadius: "0px"
+                  }
+                }}
+                value={username}
+                onChange={handleChangeUsername}
+              />
+              <TextField
+                inputProps={{
+                  'data-lpignore': 'true'
+                }}
+                autoComplete='new-password'
+                placeholder='password'
+                fullWidth
+                type="password"
+                id="(sadfds)"
+                name="password"
+                sx={{
+                  ".MuiInputBase-root": {
+                    borderTopLeftRadius: "0px",
+                    borderTopRightRadius: "0px"
+                  }
+                }}
+                value={password}
+                onChange={handleChangePassword}
+              />
 
-          {errors?.length > 0 &&
-          <Alert icon={false} variant="filled" severity="error" sx={{ width: '100%', mt: 2}}>
-            This is an error alert — check it out!
-          </Alert>}
+              {errors?.length > 0 &&
+              <Alert icon={false} variant="filled" severity="error" sx={{ width: '100%', mt: 2}}>
+                This is an error alert — check it out!
+              </Alert>}
 
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={() => dispatch(signUp({ username, password, email }))}
-            sx={{
-              my: 2
-            }}>
-            Sign up
-          </Button>
-          <Typography variant="body2">
-            Have an account? <Link href='/auth/signin' passHref><StyledInlineLink>Sign in</StyledInlineLink></Link>.
-          </Typography>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => dispatch(signUp({ username, password, email }))}
+                sx={{
+                  my: 2
+                }}>
+                Sign up
+              </Button>
+              <Typography variant="body2">
+                Have an account? <Link href='/auth/signin' passHref><StyledInlineLink>Sign in</StyledInlineLink></Link>.
+              </Typography>
+            </>
+          }
         </Box>
       </form>
     </Container>

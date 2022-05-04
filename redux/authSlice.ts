@@ -8,16 +8,21 @@ import type { RootState } from './store';
 import * as api from '../services/api';
 
 // Define a type for the slice state
-interface AuthState {
+export interface AuthState {
   user?: any;
   errors?: AuthError[];
-  loading: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: 'idle' | 'processing';
   token?: string;
 }
 
+export const AuthStatus = {
+  IDLE: 'idle',
+  PROCESSING: 'processing',
+};
+
 // Define the initial state using that type
 const initialState: AuthState = {
-  loading: 'idle',
+  status: 'idle',
 };
 
 // Action payload types
@@ -64,28 +69,33 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(cleanAuthErrors, (state, action) => {
       state.errors = [];
+      state.status = 'idle';
       return state;
     });
     // Add reducers for additional action types here, and handle loading state as needed
     // signup flow
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.user = action.payload;
+      state.status = 'idle';
     });
     builder.addCase(signUp.pending, (state, action) => {
-      state.loading = 'pending';
+      state.status = 'processing';
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.errors = [action.error] as AuthError[];
+      state.status = 'idle';
     });
     // signin flow
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.user = action.payload;
+      state.status = 'idle';
     });
     builder.addCase(signIn.pending, (state, action) => {
-      state.loading = 'pending';
+      state.status = 'processing';
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.errors = [action.error] as AuthError[];
+      state.status = 'idle';
     });
   },
 });
