@@ -11,13 +11,15 @@ import * as api from '../services/api';
 export interface AuthState {
   user?: any;
   errors?: AuthError[];
-  status: 'idle' | 'processing';
+  status: 'idle' | 'processing' | 'success';
   token?: string;
+  message?: string;
 }
 
 export const AuthStatus = {
   IDLE: 'idle',
   PROCESSING: 'processing',
+  SUCCESS: 'success',
 };
 
 // Define the initial state using that type
@@ -58,6 +60,15 @@ export const signIn = createAsyncThunk(
   }
 );
 
+export const passwordReset = createAsyncThunk(
+  'auth/passwordReset',
+  async (params: { usernameOrEmail: string }, thunkAPI) => {
+    const response = await api.passwordReset(params);
+    if (response.errors) return thunkAPI.rejectWithValue(response.errors);
+    return response.data;
+  }
+);
+
 export const cleanAuthErrors = createAction<undefined>('auth/cleanErrors');
 
 // setup
@@ -79,6 +90,7 @@ export const authSlice = createSlice({
       state.status = 'idle';
     });
     builder.addCase(signUp.pending, (state, action) => {
+      state.errors = [];
       state.status = 'processing';
     });
     builder.addCase(signUp.rejected, (state, action) => {
@@ -87,13 +99,28 @@ export const authSlice = createSlice({
     });
     // signin flow
     builder.addCase(signIn.fulfilled, (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload?.user;
       state.status = 'idle';
     });
     builder.addCase(signIn.pending, (state, action) => {
+      state.errors = [];
       state.status = 'processing';
     });
     builder.addCase(signIn.rejected, (state, action) => {
+      state.errors = [action.error] as AuthError[];
+      state.status = 'idle';
+    });
+    // password reset flow
+    builder.addCase(passwordReset.fulfilled, (state, action) => {
+      console.log(action);
+      state.message = action.payload?.message;
+      state.status = 'success';
+    });
+    builder.addCase(passwordReset.pending, (state, action) => {
+      state.errors = [];
+      state.status = 'processing';
+    });
+    builder.addCase(passwordReset.rejected, (state, action) => {
       state.errors = [action.error] as AuthError[];
       state.status = 'idle';
     });

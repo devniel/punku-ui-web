@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { push } from 'connected-next-router';
 import Link from 'next/link';
 import { createContext, useContext, useState, ChangeEvent } from 'react';
@@ -19,8 +20,9 @@ import {
   DEFAULT_PAGE_SEARCH_RESULTS,
   DEFAULT_PAGE_START,
 } from '../../constants';
-import { AuthStatus, signIn } from '../../redux/authSlice';
+import { AuthStatus, passwordReset } from '../../redux/authSlice';
 import { useAppSelector } from '../../redux/hooks';
+import MailIcon from '@mui/icons-material/Mail';
 
 const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -32,14 +34,11 @@ export function Signin() {
   const [password, setPassword] = useState<string>('');
   const errors = useAppSelector(state => state.auth?.errors);
   const status = useAppSelector(state => state.auth?.status);
+  const message = useAppSelector(state => state.auth?.message);
 
   /** When changing query text */
   const handleChangeUsernameOrEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setUsernameOrEmail(e.target.value);
-  };
-
-  const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
   };
 
   return (
@@ -59,9 +58,22 @@ export function Signin() {
         <Typography fontWeight={500} variant="h1" mb={3}>
           punku
         </Typography>
+        {status === AuthStatus.SUCCESS && message &&
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+            <MailIcon fontSize='large' sx={{ mb: 1 }} />
+            <Typography fontWeight={500} variant="h5" mb={3} align="center">
+              {message}
+            </Typography>
+          </Box>
+        }
         {status === AuthStatus.PROCESSING && <CircularProgress/>}
         {status === AuthStatus.IDLE &&
           <>
+            <Typography variant="h5" sx={{
+              mb: 2
+            }}>
+              Search you username or email
+            </Typography>
             <TextField
               inputProps={{
                 'data-lpignore': 'true'
@@ -79,42 +91,17 @@ export function Signin() {
               value={usernameOrEmail}
               onChange={handleChangeUsernameOrEmail}
             />
-            <TextField
-              inputProps={{
-                'data-lpignore': 'true'
-              }}
-              placeholder='password'
-              autoComplete='new-password'
-              fullWidth
-              type="password"
-              id="password"
-              sx={{
-                ".MuiInputBase-root": {
-                  borderTopLeftRadius: "0px",
-                  borderTopRightRadius: "0px"
-                }
-              }}
-              value={password}
-              onChange={handleChangePassword}
-            />
             {errors?.length > 0 && <Alert icon={false} variant="filled" severity="error" sx={{ width: '100%', mt: 2}}>
               This is an error alert — check it out!
             </Alert>}
             <Button fullWidth variant="contained" sx={{
               my: 2
             }} onClick={async () => {
-              await dispatch(signIn({ usernameOrEmail, password }));
-              await dispatch(push('/'));
+              await dispatch(passwordReset({ usernameOrEmail }));
             }}
             >
-              Sign in
+              Request password reset
             </Button>
-            <Typography variant="body2">
-              <Link href="/auth/signup" passHref><StyledLink>Create an account</StyledLink></Link>
-            </Typography>
-            <Typography variant="body2">
-              <Link href="/auth/password_reset" passHref><StyledLink>Did you forget your password?</StyledLink></Link>
-            </Typography>
           </>
         }
       </Box>

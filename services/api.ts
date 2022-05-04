@@ -55,3 +55,26 @@ export const signIn = async function ({
     })
   )?.data;
 };
+
+export const passwordReset = async function ({
+  usernameOrEmail,
+}): Promise<any> {
+  return (
+    await axios({
+      url: BASE_API_URL,
+      method: 'post',
+      data: {
+        query: `
+        mutation passwordReset($data: SigninInput!) {
+          passwordReset(data: $SigninInput) {
+            message
+          }
+        }
+      `,
+        variables: {
+          data: { usernameOrEmail },
+        },
+      },
+    })
+  )?.data;
+};
